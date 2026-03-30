@@ -275,6 +275,81 @@ opacity:0.8;
 
 <script>
 
+const ALL_COVERS = [
+  "covers/3.webp",
+  "covers/4.webp",
+  "covers/5.webp",
+  "covers/6.webp",
+  "covers/7.webp",
+  "covers/8.webp",
+  "covers/9.webp",
+  "covers/10.webp",
+  "covers/11.webp",
+  "covers/12.webp",
+  "covers/13.webp",
+  "covers/14.webp",
+  "covers/15.webp",
+  "covers/16.webp",
+  "covers/17.webp",
+  "covers/18.webp",
+  "covers/19.webp",
+  "covers/20.webp",
+  "covers/21.webp",
+  "covers/22.webp",
+  "covers/23.webp",
+  "covers/24.webp",
+  "covers/25.webp",
+  "covers/26.webp",
+  "covers/27.webp",
+  "covers/28.webp",
+  "covers/29.webp",
+  "covers/30.webp",
+  "covers/31.webp",
+  "covers/32.webp",
+  "covers/33.webp",
+  "covers/34.webp",
+  "covers/35.webp",
+  "covers/36.webp",
+  "covers/37.webp",
+  "covers/38.webp",
+  "covers/39.webp",
+  "covers/40.webp",
+  "covers/41.webp",
+  "covers/42.webp",
+  "covers/43.webp",
+  "covers/44.webp",
+  "covers/45.webp",
+  "covers/46.webp",
+  "covers/47.webp",
+  "covers/48.webp",
+  "covers/49.webp",
+  "covers/50.webp",
+  "covers/51.webp",
+  "covers/52.webp",
+  "covers/53.webp",
+  "covers/54.webp",
+  "covers/55.webp",
+  "covers/56.webp"
+]
+
+function getSessionCovers(count) {
+
+  const cache = sessionStorage.getItem("RANDOM_COVERS")
+  if (cache) return JSON.parse(cache)
+
+  let shuffled = [...ALL_COVERS]
+
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+  }
+
+  const result = shuffled.slice(0, count)
+
+  sessionStorage.setItem("RANDOM_COVERS", JSON.stringify(result))
+
+  return result
+}  
 /* 粒子 */
 
 const canvas=document.getElementById("particles")
@@ -324,9 +399,13 @@ fetch("data.json?v=" + Date.now())
 
 data.sort((a,b)=>new Date(b.date)-new Date(a.date))
 
+const randomCovers = getSessionCovers(data.length)
+
 const list=document.getElementById("list")
 
-data.forEach(item=>{
+data.forEach((item,index)=>{
+
+const cover = randomCovers[index]
 
 const card=document.createElement("a")
 
@@ -335,7 +414,7 @@ card.href=item.url
 card.target="_self"
 
 card.innerHTML=`
-<img loading="lazy" src="${item.cover}">
+<img loading="lazy" src="${cover}">
 <div class="card-body">
 <div class="subtitle">${item.subtitle || ""}</div>
 <div class="week">${item.title}</div>
@@ -344,6 +423,7 @@ card.innerHTML=`
 
 card.addEventListener("click",function(e){
 console.log("仅供信息展示，不涉及交易")
+
 const ripple=document.createElement("span")
 ripple.className="ripple"
 
@@ -358,7 +438,6 @@ ripple.style.top=e.clientY-rect.top-size/2+"px"
 card.appendChild(ripple)
 
 setTimeout(()=>ripple.remove(),600)
-
 })
 
 list.appendChild(card)
